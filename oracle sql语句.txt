@@ -1,0 +1,83 @@
+﻿oracle 版本:
+    9i    internet互联网
+    10g   grid 网格运算
+    11g
+    12c   cloud 云计算
+oracle连接工具:
+    cmd  :  sqlplus sys/123456 as sysdba   能够执行所有命令
+    sqlDeveloper:                          部分命令不能执行
+    plsqlDeveloper:                        部分命令不能执行
+    
+ --创建用户并指定密码
+ create user lanou identified by 123456;   
+ --在sql窗口中切换用户
+ conn lanou/123456  
+ --使用sys用户给指定用户赋权
+ grant connect,resource,create session,dba to lanou;
+ -- 回收权限 
+ revoke create session from lanou;
+ --权限  
+        --系统权限create table,alter,drop  
+        --对象权限insert update delete 
+--        
+  conn lanou/123456;
+--创建表
+    --学生表  id   name            score  birthday   
+    --       int varchar(20)变长 zhangsan char(20) 定长 zhangsan
+--创建语法 注意数据类型    
+    create table student
+    (
+        id number primary key,
+        name varchar2(16) not null,
+        score number(4,1) ,
+        birthday date
+    );
+-- 新增 一个insert后只能新增一条数据
+    insert into student(id,name,score,birthday) values (1,'张忠亮',69.5,null);
+    
+    select * from student;
+--使用自动增长写入数据
+    --序列 sequence
+    --创建序列
+    create sequence seq_student_id 
+        start with 2 
+        increment by 1
+        maxvalue  9999999999;
+    --查看序列的当前值
+    select seq_student_id.currval from student;
+    --查看序列的下一个值
+    select seq_student_id.nextval from dual;
+    -- oracle中最小的表 虚表  不存放任何数据
+    select * from dual;
+    insert into student(id,name,score,birthday) values (seq_student_id.nextval,'张忠杠',79.5,null);
+    -- copy 一张小到新表中 结果和内容都一致
+    create table emp as select * from scott.emp;
+    create table dept as select * from scott.dept;
+    select * from emp;
+    select * from dept;
+    --做一张报表,显示员工信息,报表中显示员工姓名(小写)
+    select ename,lower(ename) as 小写,upper(ename) 大写 , initcap(ename) 首字母大写 from emp;
+    --查询数据时,合并数据展示
+    select ename,job from emp;
+    select concat(ename,job) from emp;
+    --截取字符串  从第一个位置开始截取,截取3个长度 
+    select ename,substr(ename,0,3) from emp;
+    --拼接 字符为指定长度,不足的用字符补齐  left 左补齐
+    select ename,lpad(ename,8,'-') , rpad(ename,8,'-') from emp;
+    --获取字符串长度
+    select ename,length(ename) from emp;
+    --trim 去除字符串两端的特定字符
+    select ename,trim('S' from ename) from emp;
+    
+    --数值函数  
+    select round(299.89,1) from dual;   --299.9
+    select round(299.99,1) from dual;   --300
+    select round(299.19) from dual;   --299
+     
+    select trunc(299.99,1) from dual;   --299.9
+    select trunc(299.99) from dual;   --299
+    
+    select mod(100,20) from dual; --0  余数
+    
+    
+  
